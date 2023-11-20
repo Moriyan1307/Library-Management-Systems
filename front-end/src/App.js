@@ -162,19 +162,19 @@ function App() {
   const fetchBorrowingTable = async () => {
     setIsBorrowingTable(true);
     try {
-      const response = await axios.get(`${apiUrl}/members`);
+      const response = await axios.get(`${apiUrl}/borrowing`);
       setBorrowingData(response.data);
-      console.log(memberData);
+      console.log(borrowingData);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
   const fetchCatalog = async () => {
-    setCatalogData(true);
+    setIsCatalogTable(true);
     try {
       const response = await axios.get(`${apiUrl}/catalog`);
       setCatalogData(response.data);
-      console.log(memberData);
+      console.log(catalogData);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -382,39 +382,45 @@ function App() {
               borderCollapse: "collapse",
               marginTop: "10px",
             }}
+
+            
+
+
           >
             <thead>
-              <tr>
-                <th>Borrowing ID</th>
-                <th>Member ID</th>
-                <th>Issue Date</th>
-                <th>Due Date</th>
-                <th>Return Date</th>
-                <th>Status</th>
-                <th>ISBN</th>
-              </tr>
-            </thead>
-            <tbody>
-              {borrowingData ? (
-                borrowingData.map((borrowing) => (
-                  <tr key={borrowing.BorrowingID}>
-                    <td>{borrowing.BorrowingID}</td>
-                    <td>{borrowing.MemberID}</td>
-                    <td>{borrowing.IssueDate}</td>
-                    <td>{borrowing.DueDate}</td>
-                    <td>{borrowing.ReturnDate}</td>
-                    <td>{borrowing.Status}</td>
-                    <td>{borrowing.ISBN}</td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="7">Loading...</td>
-                </tr>
-              )}
-            </tbody>
+  <tr>
+    <th style={tableHeaderStyle}>Borrowing ID</th>
+    <th style={tableHeaderStyle}>Member ID</th>
+    <th style={tableHeaderStyle}>Issue Date</th>
+    <th style={tableHeaderStyle}>Due Date</th>
+    <th style={tableHeaderStyle}>Return Date</th>
+    <th style={tableHeaderStyle}>Status</th>
+    <th style={tableHeaderStyle}>ISBN</th>
+  </tr>
+</thead>
+<tbody>
+  {borrowingData ? (
+    borrowingData.map((borrowing) => (
+      <tr key={borrowing.BorrowingID}>
+        <td style={tableCellStyle}>{borrowing.BorrowingID}</td>
+        <td style={tableCellStyle}>{borrowing.MemberID}</td>
+        <td style={tableCellStyle}>{borrowing.IssueDate}</td>
+        <td style={tableCellStyle}>{borrowing.DueDate}</td>
+        <td style={tableCellStyle}>{borrowing.ReturnDate}</td>
+        <td style={tableCellStyle}>{borrowing.Status}</td>
+        <td style={tableCellStyle}>{borrowing.ISBN}</td>
+      </tr>
+    ))
+  ) : (
+    <tr>
+      <td colSpan="7" style={tableCellStyle}>
+        Loading...
+      </td>
+    </tr>
+  )}
+</tbody>
           </table>
-          ;
+          
         </div>
       ) : (
         <p>Loading...</p>
@@ -445,34 +451,36 @@ function App() {
               marginTop: "10px",
             }}
           >
-            <thead>
-              <tr>
-                <th>Catalog ID</th>
-                <th>Author</th>
-                <th>Title</th>
-                <th>Subject Area</th>
-                <th>Description</th>
-                <th>ISBN</th>
-              </tr>
-            </thead>
-            <tbody>
-              {catalogData ? (
-                catalogData.map((catalog) => (
-                  <tr key={catalog.CatalogID}>
-                    <td>{catalog.CatalogID}</td>
-                    <td>{catalog.Author}</td>
-                    <td>{catalog.Title}</td>
-                    <td>{catalog.SubjectArea}</td>
-                    <td>{catalog.Description}</td>
-                    <td>{catalog.ISBN}</td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="6">Loading...</td>
-                </tr>
-              )}
-            </tbody>
+           <thead>
+  <tr>
+    <th style={tableHeaderStyle}>Catalog ID</th>
+    <th style={tableHeaderStyle}>Author</th>
+    <th style={tableHeaderStyle}>Title</th>
+    <th style={tableHeaderStyle}>Subject Area</th>
+    <th style={tableHeaderStyle}>Description</th>
+    <th style={tableHeaderStyle}>ISBN</th>
+  </tr>
+</thead>
+<tbody>
+  {catalogData ? (
+    catalogData.map((catalog) => (
+      <tr key={catalog.CatalogID}>
+        <td style={tableCellStyle}>{catalog.CatalogID}</td>
+        <td style={tableCellStyle}>{catalog.Author}</td>
+        <td style={tableCellStyle}>{catalog.Title}</td>
+        <td style={tableCellStyle}>{catalog.SubjectArea}</td>
+        <td style={tableCellStyle}>{catalog.Description}</td>
+        <td style={tableCellStyle}>{catalog.ISBN}</td>
+      </tr>
+    ))
+  ) : (
+    <tr>
+      <td colSpan="6" style={tableCellStyle}>
+        Loading...
+      </td>
+    </tr>
+  )}
+</tbody>
           </table>
           ;
         </div>
@@ -874,7 +882,7 @@ function App() {
             <Button
               sx={{ height: "50%", width: "70%" }}
               size="large"
-              onClick={() => setIsCatalogTable(true)}
+              onClick={() => fetchCatalog()}
               variant="outlined"
             >
               Show Catalog
@@ -885,7 +893,7 @@ function App() {
             <Button
               sx={{ height: "50%", width: "70%" }}
               size="large"
-              onClick={() => setIsBorrowingTable(true)}
+              onClick={() => fetchBorrowingTable()}
               variant="outlined"
             >
               Show Borrowing Table
