@@ -16,12 +16,16 @@ import { styled } from "@mui/system";
 function App() {
   const [bookData, setBookData] = useState(null);
   const [memberData, setMemberData] = useState(null);
+  const [catalogData, setCatalogData] = useState(null);
+  const [borrowingData, setBorrowingData] = useState(null);
   const [bprompt, setBprompt] = useState(false);
   const [Is_mprompt, setIs_mprompt] = useState(false);
   const [isBookPrompt, setIsBookPrompt] = useState(false);
   const [isMemberPrompt, setIsmemberPrompt] = useState(false);
   const [isBorrowPrompt, setIsBorrowPrompt] = useState(false);
   const [isReturnPrompt, setIsReturnPrompt] = useState(false);
+  const [isBorrowingTable, setIsBorrowingTable] = useState(false);
+  const [isCatalogTable, setIsCatalogTable] = useState(false);
 
   const [borrowData, setBorrowData] = useState({
     MemberID: "",
@@ -149,6 +153,27 @@ function App() {
     try {
       const response = await axios.get(`${apiUrl}/members`);
       setMemberData(response.data);
+      console.log(memberData);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  const fetchBorrowingTable = async () => {
+    setIsBorrowingTable(true);
+    try {
+      const response = await axios.get(`${apiUrl}/members`);
+      setBorrowingData(response.data);
+      console.log(memberData);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+  const fetchCatalog = async () => {
+    setCatalogData(true);
+    try {
+      const response = await axios.get(`${apiUrl}/catalog`);
+      setCatalogData(response.data);
       console.log(memberData);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -335,6 +360,128 @@ function App() {
           Close
         </Button>
       </form>
+    </Box>
+  );
+
+  const borrowingTable = (
+    <Box
+      sx={{
+        height: "auto",
+        width: "auto",
+        zIndex: "999",
+
+        backgroundColor: "white",
+        position: "absolute",
+      }}
+    >
+      {borrowingData ? (
+        <div style={{ margin: "20px" }}>
+          <table
+            style={{
+              width: "100%",
+              borderCollapse: "collapse",
+              marginTop: "10px",
+            }}
+          >
+            <thead>
+              <tr>
+                <th>Borrowing ID</th>
+                <th>Member ID</th>
+                <th>Issue Date</th>
+                <th>Due Date</th>
+                <th>Return Date</th>
+                <th>Status</th>
+                <th>ISBN</th>
+              </tr>
+            </thead>
+            <tbody>
+              {borrowingData ? (
+                borrowingData.map((borrowing) => (
+                  <tr key={borrowing.BorrowingID}>
+                    <td>{borrowing.BorrowingID}</td>
+                    <td>{borrowing.MemberID}</td>
+                    <td>{borrowing.IssueDate}</td>
+                    <td>{borrowing.DueDate}</td>
+                    <td>{borrowing.ReturnDate}</td>
+                    <td>{borrowing.Status}</td>
+                    <td>{borrowing.ISBN}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="7">Loading...</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+          ;
+        </div>
+      ) : (
+        <p>Loading...</p>
+      )}
+      <Button onClick={() => setIsBorrowingTable(false)} variant="outlined">
+        Close
+      </Button>
+    </Box>
+  );
+
+  const catalogTable = (
+    <Box
+      sx={{
+        height: "auto",
+        width: "auto",
+        zIndex: "999",
+
+        backgroundColor: "white",
+        position: "absolute",
+      }}
+    >
+      {catalogData ? (
+        <div style={{ margin: "20px" }}>
+          <table
+            style={{
+              width: "100%",
+              borderCollapse: "collapse",
+              marginTop: "10px",
+            }}
+          >
+            <thead>
+              <tr>
+                <th>Catalog ID</th>
+                <th>Author</th>
+                <th>Title</th>
+                <th>Subject Area</th>
+                <th>Description</th>
+                <th>ISBN</th>
+              </tr>
+            </thead>
+            <tbody>
+              {catalogData ? (
+                catalogData.map((catalog) => (
+                  <tr key={catalog.CatalogID}>
+                    <td>{catalog.CatalogID}</td>
+                    <td>{catalog.Author}</td>
+                    <td>{catalog.Title}</td>
+                    <td>{catalog.SubjectArea}</td>
+                    <td>{catalog.Description}</td>
+                    <td>{catalog.ISBN}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="6">Loading...</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+          ;
+        </div>
+      ) : (
+        <p>Loading...</p>
+      )}
+      <Button onClick={() => setIsCatalogTable(false)} variant="outlined">
+        Close
+      </Button>
     </Box>
   );
 
@@ -708,7 +855,7 @@ function App() {
               onClick={() => fetchData()}
               variant="outlined"
             >
-              Books
+              Show Books
             </Button>
           </Box>
           {bprompt && prompt}
@@ -719,10 +866,32 @@ function App() {
               onClick={() => fetchMember()}
               variant="outlined"
             >
-              Members
+              Show Members
             </Button>
           </Box>
           {isMemberPrompt && memberprompt}
+          <Box sx={{ height: "40%", width: "30%" }}>
+            <Button
+              sx={{ height: "50%", width: "70%" }}
+              size="large"
+              onClick={() => setIsCatalogTable(true)}
+              variant="outlined"
+            >
+              Show Catalog
+            </Button>
+          </Box>
+          {isCatalogTable && catalogTable}
+          <Box sx={{ height: "40%", width: "30%" }}>
+            <Button
+              sx={{ height: "50%", width: "70%" }}
+              size="large"
+              onClick={() => setIsBorrowingTable(true)}
+              variant="outlined"
+            >
+              Show Borrowing Table
+            </Button>
+          </Box>
+          {isBorrowingTable && borrowingTable}
           <Box sx={{ height: "40%", width: "30%" }}>
             <Button
               sx={{ height: "50%", width: "70%" }}
