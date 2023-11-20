@@ -20,6 +20,42 @@ function App() {
   const [Is_mprompt, setIs_mprompt] = useState(false);
   const [isBookPrompt, setIsBookPrompt] = useState(false);
   const [isMemberPrompt, setIsmemberPrompt] = useState(false);
+  const [isBorrowPrompt, setIsBorrowPrompt] = useState(false);
+  const [isReturnPrompt, setIsReturnPrompt] = useState(false);
+
+  const [borrowData, setBorrowData] = useState({
+    MemberID: "",
+    ISBN: "",
+    IssueDate: "", // You might want to use a date picker or another input type for dates
+    // Add other fields as needed
+  });
+
+  const handleBorrow = (e) => {
+    setBorrowData({
+      ...borrowData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleBorrowSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      // Replace 'http://localhost:3001/api/borrow' with your actual server endpoint
+      const response = await axios.post(`${apiUrl}/borrow`, borrowData);
+      console.log("Response from server:", response.data);
+      // Optionally, you can reset the form or perform other actions upon successful submission
+      setBorrowData({
+        MemberID: "",
+        ISBN: "",
+        IssueDate: "",
+        // Reset other fields as needed
+      });
+    } catch (error) {
+      console.error("Error submitting data:", error);
+      // Handle error state or display an error message to the user
+    }
+  };
 
   const [formData, setFormData] = useState({
     ISBN: "",
@@ -40,8 +76,47 @@ function App() {
     LastName: "",
     CampusAddress: "",
     HomeAddress: "",
-    Phone: ""
+    Phone: "",
+  });
+
+  const [returnData, setReturnData] = useState({
+    MemberID: "",
+    ISBN: "",
+    // Add other fields as needed
+  });
+  const handleReturn = (e) => {
+    setReturnData({
+      [e.target.name]: e.target.value,
     });
+  };
+
+  const handleReturnSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await axios.post(`${apiUrl}/return`, returnData);
+      console.log("Response from server:", response.data);
+
+      alert("Successful");
+      handleRecipt();
+    } catch (error) {
+      console.error("Error submitting data:", error);
+      alert(error);
+    }
+  };
+
+  const handleRecipt = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await axios.get(
+        `${apiUrl}/member/${returnData.MemberID}`
+      );
+      console.log("Response from server:", response.data);
+    } catch (error) {
+      console.error("Error submitting data:", error);
+    }
+  };
 
   const apiUrl = "http://localhost:8080";
 
@@ -87,7 +162,6 @@ function App() {
       console.log("Response from server:", formData);
       const response = await axios.post(`${apiUrl}/api/addBook`, formData);
       alert("Book Added Successfully");
-
     } catch (error) {
       alert("Error submitting data:", error);
     }
@@ -212,6 +286,58 @@ function App() {
     </Box>
   );
 
+  const returnPrompt = (
+    <Box
+      sx={{
+        height: "70vh",
+        width: "50vw",
+        border: "2px solid #000",
+        backgroundColor: "white",
+        position: "absolute",
+        zIndex: "999",
+      }}
+    >
+      <form
+        onSubmit={handleReturnSubmit}
+        style={{
+          height: "100%",
+
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-around",
+        }}
+      >
+        <label>
+          Member ID:
+          <input
+            type="text"
+            name="MemberID"
+            value={returnData.MemberID}
+            onChange={handleReturn}
+          />
+        </label>
+        <label>
+          ISBN:
+          <input
+            type="text"
+            name="ISBN"
+            value={returnData.ISBN}
+            onChange={handleReturn}
+          />
+        </label>
+
+        <Button variant="oulined" type="submit">
+          Submit
+        </Button>
+        <Button variant="oulined">Print Recipt</Button>
+
+        <Button onClick={() => setIsReturnPrompt(false)} variant="outlined">
+          Close
+        </Button>
+      </form>
+    </Box>
+  );
+
   const memberprompt = (
     <Box
       sx={{
@@ -283,6 +409,65 @@ function App() {
       <Button onClick={() => setIsmemberPrompt(false)} variant="outlined">
         Close
       </Button>
+    </Box>
+  );
+
+  const borrowPrompt = (
+    <Box
+      sx={{
+        height: "70vh",
+        width: "50vw",
+        border: "2px solid #000",
+        backgroundColor: "white",
+        position: "absolute",
+        zIndex: "999",
+      }}
+    >
+      <form
+        style={{
+          height: "100%",
+
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-around",
+        }}
+        onSubmit={handleBorrowSubmit}
+      >
+        <label>
+          Member ID:
+          <input
+            type="text"
+            name="MemberID"
+            value={borrowData.MemberID}
+            onChange={handleBorrow}
+          />
+        </label>
+        <label>
+          ISBN:
+          <input
+            type="text"
+            name="ISBN"
+            value={borrowData.ISBN}
+            onChange={handleBorrow}
+          />
+        </label>
+        <label>
+          Issue Date:
+          <input
+            type="text"
+            name="IssueDate"
+            value={borrowData.IssueDate}
+            onChange={handleBorrow}
+          />
+        </label>
+        {/* Add other input fields as needed */}
+        <Button variant="oulined" type="submit">
+          Submit
+        </Button>
+        <Button onClick={() => setIsBorrowPrompt(false)} variant="outlined">
+          Close
+        </Button>
+      </form>
     </Box>
   );
 
@@ -564,22 +749,24 @@ function App() {
             <Button
               sx={{ height: "50%", width: "70%" }}
               size="large"
-              onClick={() => fetchData()}
+              onClick={() => setIsBorrowPrompt(true)}
               variant="outlined"
             >
-              Books
+              Borrow a Book
             </Button>
           </Box>
+          {isBorrowPrompt && borrowPrompt}
           <Box sx={{ height: "40%", width: "30%" }}>
             <Button
               sx={{ height: "50%", width: "70%" }}
               size="large"
-              onClick={() => fetchData()}
+              onClick={() => setIsReturnPrompt(true)}
               variant="outlined"
             >
-              Books
+              Return a Book
             </Button>
           </Box>
+          {isReturnPrompt && returnPrompt}
         </Box>
       </Box>
     </div>
