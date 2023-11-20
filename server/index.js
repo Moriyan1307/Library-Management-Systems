@@ -2,6 +2,19 @@ const express = require('express');
 const mysql = require('mysql');
 const app = express();
 
+const cors = require('cors');
+
+const bodyParser = require('body-parser');
+
+
+// Use body-parser middleware
+app.use(bodyParser.json());
+
+
+
+// Enable CORS for all routes
+app.use(cors());
+
 app.get('/',(req,res)=>{
     res.send("Hello World")
 })
@@ -36,7 +49,7 @@ app.get('/members', (req, res) => {
   });
 });
 
-app.get('/books', (req, res) => {
+app.get('/book', (req, res) => {
  
   connection.query("SELECT * FROM BOOKS ", (err, results) => {
     if (err) {
@@ -96,6 +109,37 @@ app.get('/staff', (req, res) => {
 //   });
 // });
 
+
+
+app.post('/api/addBook', (req, res) => {
+  console.log('Received data:', req.body)
+  const { ISBN, Title, Author, PublishedYear, Genre, Description, TotalCopies , AvailableCopies,
+  IsReferenceBook,IsRareBook,IsMap} = req.body; // Add other fields as needed
+  connection.query('INSERT INTO Books SET ?', req.body, (err, results) => {
+    if (err) {
+      console.error('Error executing MySQL query:', err);
+      res.status(500).send('Internal Server Error');
+      return;
+    } 
+    res.json(results);
+  });
+});
+
+
+app.post('/api/addMember', (req, res) => {
+  console.log('Received data:', req.body)
+  const { MemberID, SSN, FirstName, LastName, CampusAddress, HomeAddress, Phone, MembershipCardNumber, 
+    MembershipExpiryDate, MembershipStatus} = req.body; // Add other fields as needed
+  connection.query('INSERT INTO Members SET ?', req.body, (err, results) => {
+    if (err) {
+      console.error('Error executing MySQL query:', err);
+      res.status(500).send('Internal Server Error');
+      return;
+    } 
+    res.json(results);
+  });
+});
+
 const newMember = {
   SSN: '587962563',
   FirstName: 'Abraham',
@@ -121,8 +165,9 @@ app.get('/addmember', (req, res) => {
   });
 });
 
+
 const newBook = {
-  ISBN: '978-1234568611',
+  ISBN: '978-1234569600',
   Title: 'The Big Bull',
   Author: 'John Author',
   PublishedYear: 2023,
@@ -134,7 +179,6 @@ const newBook = {
   IsRareBook: false,
   IsMap: false,
 };
-
 
 app.get('/addbook', (req, res) => {
  
@@ -196,22 +240,9 @@ app.get('/renew', (req, res) => {
 });
 
 
-app.get('/report', (req, res) => {
- 
-  connection.query("SELECT c.SubjectArea, c.Author, COUNT(b.ISBN) AS NumberOfCopies, DATEDIFF(b.ReturnDate, b.IssueDate) AS DaysLoanedOut FROM Borrowing b JOIN Catalog c ON b.ISBN = c.ISBN WHERE WEEK(b.IssueDate) = WEEK(CURDATE()) GROUP BY c.SubjectArea, c.Author;", (err, results) => {
-    if (err) {
-      console.error('Error executing MySQL query:', err);
-      res.status(500).send('Internal Server Error');
-      return;
-    } 
-    res.json(results);
-  });
-});
-
-
 // app.get('/report', (req, res) => {
  
-//   connection.query("SELECT c.SubjectArea, c.Author, b.ISBN, c.Title, COUNT(b.ISBN) AS NumberOfCopies, DATEDIFF(b.ReturnDate, b.IssueDate) AS DaysLoanedOut FROM Borrowing b JOIN Catalog c ON b.ISBN = c.ISBN WHERE b.ISBN IN ('978-0060935467', '978-0061120084', '978-0140283334','978-0143039433', '978-0307454544', '978-0316769488','978-0316769490', '978-0375411557', '978-0385472579','978-0451524935', '978-0553213481', '978-0743247544','978-0743273565', '978-0987654321', '978-1122334455','978-1234567890', '978-1234568611', '978-1234568650','978-1400033423', '978-9876543210') GROUP BY c.SubjectArea, c.Author, b.ISBN, c.Title, b.IssueDate, b.ReturnDate;", (err, results) => {
+//   connection.query("SELECT c.SubjectArea, c.Author, COUNT(b.ISBN) AS NumberOfCopies, DATEDIFF(b.ReturnDate, b.IssueDate) AS DaysLoanedOut FROM Borrowing b JOIN Catalog c ON b.ISBN = c.ISBN WHERE WEEK(b.IssueDate) = WEEK(CURDATE()) GROUP BY c.SubjectArea, c.Author;", (err, results) => {
 //     if (err) {
 //       console.error('Error executing MySQL query:', err);
 //       res.status(500).send('Internal Server Error');
@@ -220,6 +251,19 @@ app.get('/report', (req, res) => {
 //     res.json(results);
 //   });
 // });
+
+
+app.get('/report', (req, res) => {
+ 
+  connection.query("SELECT c.SubjectArea, c.Author, b.ISBN, c.Title, COUNT(b.ISBN) AS NumberOfCopies, DATEDIFF(b.ReturnDate, b.IssueDate) AS DaysLoanedOut FROM Borrowing b JOIN Catalog c ON b.ISBN = c.ISBN WHERE b.ISBN IN ('978-0060935467', '978-0061120084', '978-0140283334','978-0143039433', '978-0307454544', '978-0316769488','978-0316769490', '978-0375411557', '978-0385472579','978-0451524935', '978-0553213481', '978-0743247544','978-0743273565', '978-0987654321', '978-1122334455','978-1234567890', '978-1234568611', '978-1234568650','978-1400033423', '978-9876543210') GROUP BY c.SubjectArea, c.Author, b.ISBN, c.Title, b.IssueDate, b.ReturnDate;", (err, results) => {
+    if (err) {
+      console.error('Error executing MySQL query:', err);
+      res.status(500).send('Internal Server Error');
+      return;
+    } 
+    res.json(results);
+  });
+});
 
 
 
