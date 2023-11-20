@@ -128,8 +128,7 @@ app.post('/api/addBook', (req, res) => {
 
 app.post('/api/addMember', (req, res) => {
   console.log('Received data:', req.body)
-  const { MemberID, SSN, FirstName, LastName, CampusAddress, HomeAddress, Phone, MembershipCardNumber, 
-    MembershipExpiryDate, MembershipStatus} = req.body; // Add other fields as needed
+  const { SSN, FirstName, LastName, CampusAddress, HomeAddress, Phone} = req.body; // Add other fields as needed
   connection.query('INSERT INTO Members SET ?', req.body, (err, results) => {
     if (err) {
       console.error('Error executing MySQL query:', err);
@@ -140,22 +139,11 @@ app.post('/api/addMember', (req, res) => {
   });
 });
 
-const newMember = {
-  SSN: '587962563',
-  FirstName: 'Abraham',
-  LastName: 'Dickinson',
-  CampusAddress: 'Summerhill',
-  HomeAddress: 'Loudonville',
-  Phone: '5689547896',
-  MembershipCardNumber: 1587,
-  MembershipExpiryDate: '2023-12-31',
-  MembershipStatus: 'Active',
-};
 
-
-app.get('/addmember', (req, res) => {
- 
-  connection.query('INSERT INTO Members SET ?', newMember, (err, results) => {
+app.post('/api/borrow', (req, res) => {
+  console.log('Received data:', req.body)
+  const { MemberID, ISBN, IssueDate} = req.body; // Add other fields as needed
+  connection.query('INSERT INTO Borrowing SET ?', req.body, (err, results) => {
     if (err) {
       console.error('Error executing MySQL query:', err);
       res.status(500).send('Internal Server Error');
@@ -166,31 +154,7 @@ app.get('/addmember', (req, res) => {
 });
 
 
-const newBook = {
-  ISBN: '978-1234569600',
-  Title: 'The Big Bull',
-  Author: 'John Author',
-  PublishedYear: 2023,
-  Genre: 'Finance',
-  Description: 'A new book description.',
-  TotalCopies: 4,
-  AvailableCopies: 3,
-  IsReferenceBook: false,
-  IsRareBook: false,
-  IsMap: false,
-};
 
-app.get('/addbook', (req, res) => {
- 
-  connection.query('INSERT INTO Books SET ?', newBook, (err, results) => {
-    if (err) {
-      console.error('Error executing MySQL query:', err);
-      res.status(500).send('Internal Server Error');
-      return;
-    } 
-    res.json(results);
-  });
-});
 
 const newBorrow = {
   MemberID: 16, // Replace with the actual MemberID

@@ -35,17 +35,13 @@ function App() {
     IsMap: false,
   });
   const [formData2, setFormData2] = useState({
-    MemberID: "",
     SSN: "",
     FirstName: "",
     LastName: "",
     CampusAddress: "",
     HomeAddress: "",
-    Phone: "",
-    MembershipCardNumber: "",
-    MembershipExpiryDate: "",
-    MembershipStatus: "",
-  });
+    Phone: ""
+    });
 
   const apiUrl = "http://localhost:8080";
 
@@ -76,7 +72,7 @@ function App() {
   const fetchMember = async () => {
     setIsmemberPrompt(true);
     try {
-      const response = await axios.get(`${apiUrl}/book`);
+      const response = await axios.get(`${apiUrl}/members`);
       setMemberData(response.data);
       console.log(memberData);
     } catch (error) {
@@ -90,10 +86,10 @@ function App() {
     try {
       console.log("Response from server:", formData);
       const response = await axios.post(`${apiUrl}/api/addBook`, formData);
+      alert("Book Added Successfully");
 
-      console.log("Response from server:", response.data);
     } catch (error) {
-      console.error("Error submitting data:", error);
+      alert("Error submitting data:", error);
     }
   };
 
@@ -112,9 +108,10 @@ function App() {
       console.log("Response from server:", formData2);
       const response = await axios.post(`${apiUrl}/api/addMember`, formData2);
 
-      console.log("Response from server:", response.data);
+      alert("Member Added Successfully");
     } catch (error) {
       console.error("Error submitting data:", error);
+      alert("Error submitting data:");
     }
   };
 
@@ -144,9 +141,9 @@ function App() {
   const prompt = (
     <Box
       sx={{
-        height: "100px",
+        height: "auto",
         width: "auto",
-
+        zIndex: "999",
         backgroundColor: "white",
         position: "absolute",
       }}
@@ -218,8 +215,9 @@ function App() {
   const memberprompt = (
     <Box
       sx={{
-        height: "100px",
+        height: "auto",
         width: "auto",
+        zIndex: "999",
 
         backgroundColor: "white",
         position: "absolute",
