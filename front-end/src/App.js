@@ -883,23 +883,15 @@ function App() {
               </tr>
             </thead>
             <tbody>
-              {ReportData ? (
-                ReportData.map((book) => (
-                  <tr key={book.ISBN}>
-                    <td style={tableCellStyle}>{book.ISBN}</td>
-                    <td style={tableCellStyle}>{book.Title}</td>
-                    <td style={tableCellStyle}>{book.Author}</td>
-                    <td style={tableCellStyle}>{book.NumberOfCopies}</td>
-                    <td style={tableCellStyle}>{book.DaysLoanedOut}</td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="10" style={tableCellStyle}>
-                    Loading...
-                  </td>
+              {ReportData.map((book) => (
+                <tr key={book.ISBN}>
+                  <td style={tableCellStyle}>{book.ISBN}</td>
+                  <td style={tableCellStyle}>{book.Title}</td>
+                  <td style={tableCellStyle}>{book.Author}</td>
+                  <td style={tableCellStyle}>{book.NumberOfCopies}</td>
+                  <td style={tableCellStyle}>{book.DaysLoanedOut}</td>
                 </tr>
-              )}
+              ))}
             </tbody>
           </table>
           ;
@@ -907,7 +899,7 @@ function App() {
       ) : (
         <p>Loading...</p>
       )}
-      <Button onClick={() => setIsmemberPrompt(false)} variant="outlined">
+      <Button onClick={() => setIsReportTable(false)} variant="outlined">
         Close
       </Button>
     </Box>
