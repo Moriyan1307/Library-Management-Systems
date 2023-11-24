@@ -18,6 +18,7 @@ function App() {
   const [memberData, setMemberData] = useState(null);
   const [catalogData, setCatalogData] = useState(null);
   const [borrowingData, setBorrowingData] = useState(null);
+  const [ReportData, setReportData] = useState(null);
   const [bprompt, setBprompt] = useState(false);
   const [Is_mprompt, setIs_mprompt] = useState(false);
   const [isBookPrompt, setIsBookPrompt] = useState(false);
@@ -26,6 +27,7 @@ function App() {
   const [isReturnPrompt, setIsReturnPrompt] = useState(false);
   const [isBorrowingTable, setIsBorrowingTable] = useState(false);
   const [isCatalogTable, setIsCatalogTable] = useState(false);
+  const [isReportTable, setIsReportTable] = useState(false);
 
   const [borrowData, setBorrowData] = useState({
     MemberID: "",
@@ -169,12 +171,24 @@ function App() {
       console.error("Error fetching data:", error);
     }
   };
+
   const fetchCatalog = async () => {
     setIsCatalogTable(true);
     try {
       const response = await axios.get(`${apiUrl}/catalog`);
       setCatalogData(response.data);
       console.log(catalogData);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  const fetchReport = async () => {
+    setIsReportTable(true);
+    try {
+      const response = await axios.get(`${apiUrl}/report`);
+      setReportData(response.data);
+      console.log(ReportData);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -382,45 +396,40 @@ function App() {
               borderCollapse: "collapse",
               marginTop: "10px",
             }}
-
-            
-
-
           >
             <thead>
-  <tr>
-    <th style={tableHeaderStyle}>Borrowing ID</th>
-    <th style={tableHeaderStyle}>Member ID</th>
-    <th style={tableHeaderStyle}>Issue Date</th>
-    <th style={tableHeaderStyle}>Due Date</th>
-    <th style={tableHeaderStyle}>Return Date</th>
-    <th style={tableHeaderStyle}>Status</th>
-    <th style={tableHeaderStyle}>ISBN</th>
-  </tr>
-</thead>
-<tbody>
-  {borrowingData ? (
-    borrowingData.map((borrowing) => (
-      <tr key={borrowing.BorrowingID}>
-        <td style={tableCellStyle}>{borrowing.BorrowingID}</td>
-        <td style={tableCellStyle}>{borrowing.MemberID}</td>
-        <td style={tableCellStyle}>{borrowing.IssueDate}</td>
-        <td style={tableCellStyle}>{borrowing.DueDate}</td>
-        <td style={tableCellStyle}>{borrowing.ReturnDate}</td>
-        <td style={tableCellStyle}>{borrowing.Status}</td>
-        <td style={tableCellStyle}>{borrowing.ISBN}</td>
-      </tr>
-    ))
-  ) : (
-    <tr>
-      <td colSpan="7" style={tableCellStyle}>
-        Loading...
-      </td>
-    </tr>
-  )}
-</tbody>
+              <tr>
+                <th style={tableHeaderStyle}>Borrowing ID</th>
+                <th style={tableHeaderStyle}>Member ID</th>
+                <th style={tableHeaderStyle}>Issue Date</th>
+                <th style={tableHeaderStyle}>Due Date</th>
+                <th style={tableHeaderStyle}>Return Date</th>
+                <th style={tableHeaderStyle}>Status</th>
+                <th style={tableHeaderStyle}>ISBN</th>
+              </tr>
+            </thead>
+            <tbody>
+              {borrowingData ? (
+                borrowingData.map((borrowing) => (
+                  <tr key={borrowing.BorrowingID}>
+                    <td style={tableCellStyle}>{borrowing.BorrowingID}</td>
+                    <td style={tableCellStyle}>{borrowing.MemberID}</td>
+                    <td style={tableCellStyle}>{borrowing.IssueDate}</td>
+                    <td style={tableCellStyle}>{borrowing.DueDate}</td>
+                    <td style={tableCellStyle}>{borrowing.ReturnDate}</td>
+                    <td style={tableCellStyle}>{borrowing.Status}</td>
+                    <td style={tableCellStyle}>{borrowing.ISBN}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="7" style={tableCellStyle}>
+                    Loading...
+                  </td>
+                </tr>
+              )}
+            </tbody>
           </table>
-          
         </div>
       ) : (
         <p>Loading...</p>
@@ -451,36 +460,36 @@ function App() {
               marginTop: "10px",
             }}
           >
-           <thead>
-  <tr>
-    <th style={tableHeaderStyle}>Catalog ID</th>
-    <th style={tableHeaderStyle}>Author</th>
-    <th style={tableHeaderStyle}>Title</th>
-    <th style={tableHeaderStyle}>Subject Area</th>
-    <th style={tableHeaderStyle}>Description</th>
-    <th style={tableHeaderStyle}>ISBN</th>
-  </tr>
-</thead>
-<tbody>
-  {catalogData ? (
-    catalogData.map((catalog) => (
-      <tr key={catalog.CatalogID}>
-        <td style={tableCellStyle}>{catalog.CatalogID}</td>
-        <td style={tableCellStyle}>{catalog.Author}</td>
-        <td style={tableCellStyle}>{catalog.Title}</td>
-        <td style={tableCellStyle}>{catalog.SubjectArea}</td>
-        <td style={tableCellStyle}>{catalog.Description}</td>
-        <td style={tableCellStyle}>{catalog.ISBN}</td>
-      </tr>
-    ))
-  ) : (
-    <tr>
-      <td colSpan="6" style={tableCellStyle}>
-        Loading...
-      </td>
-    </tr>
-  )}
-</tbody>
+            <thead>
+              <tr>
+                <th style={tableHeaderStyle}>Catalog ID</th>
+                <th style={tableHeaderStyle}>Author</th>
+                <th style={tableHeaderStyle}>Title</th>
+                <th style={tableHeaderStyle}>Subject Area</th>
+                <th style={tableHeaderStyle}>Description</th>
+                <th style={tableHeaderStyle}>ISBN</th>
+              </tr>
+            </thead>
+            <tbody>
+              {catalogData ? (
+                catalogData.map((catalog) => (
+                  <tr key={catalog.CatalogID}>
+                    <td style={tableCellStyle}>{catalog.CatalogID}</td>
+                    <td style={tableCellStyle}>{catalog.Author}</td>
+                    <td style={tableCellStyle}>{catalog.Title}</td>
+                    <td style={tableCellStyle}>{catalog.SubjectArea}</td>
+                    <td style={tableCellStyle}>{catalog.Description}</td>
+                    <td style={tableCellStyle}>{catalog.ISBN}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="6" style={tableCellStyle}>
+                    Loading...
+                  </td>
+                </tr>
+              )}
+            </tbody>
           </table>
           ;
         </div>
@@ -842,6 +851,68 @@ function App() {
     </Box>
   );
 
+  const reportTable = (
+    <Box
+      sx={{
+        height: "auto",
+        width: "auto",
+        zIndex: "999",
+
+        backgroundColor: "white",
+        position: "absolute",
+      }}
+    >
+      {ReportData ? (
+        <div style={{ margin: "20px" }}>
+          <table
+            style={{
+              width: "100%",
+              borderCollapse: "collapse",
+              marginTop: "10px",
+            }}
+          >
+            <thead>
+              <tr>
+                <tr>
+                  <th style={tableHeaderStyle}>ISBN</th>
+                  <th style={tableHeaderStyle}>Title</th>
+                  <th style={tableHeaderStyle}>Author</th>
+                  <th style={tableHeaderStyle}>Number of Copies</th>
+                  <th style={tableHeaderStyle}>Days Loaned Out</th>
+                </tr>
+              </tr>
+            </thead>
+            <tbody>
+              {ReportData ? (
+                ReportData.map((book) => (
+                  <tr key={book.ISBN}>
+                    <td style={tableCellStyle}>{book.ISBN}</td>
+                    <td style={tableCellStyle}>{book.Title}</td>
+                    <td style={tableCellStyle}>{book.Author}</td>
+                    <td style={tableCellStyle}>{book.NumberOfCopies}</td>
+                    <td style={tableCellStyle}>{book.DaysLoanedOut}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="10" style={tableCellStyle}>
+                    Loading...
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+          ;
+        </div>
+      ) : (
+        <p>Loading...</p>
+      )}
+      <Button onClick={() => setIsmemberPrompt(false)} variant="outlined">
+        Close
+      </Button>
+    </Box>
+  );
+
   return (
     <div className="App">
       <h1>Library Management System</h1>
@@ -944,6 +1015,17 @@ function App() {
             </Button>
           </Box>
           {isReturnPrompt && returnPrompt}
+          <Box sx={{ height: "40%", width: "30%" }}>
+            <Button
+              sx={{ height: "50%", width: "70%" }}
+              size="large"
+              onClick={() => fetchReport()}
+              variant="outlined"
+            >
+              Print Weekly Report
+            </Button>
+          </Box>
+          {isReportTable && reportTable}
         </Box>
       </Box>
     </div>
