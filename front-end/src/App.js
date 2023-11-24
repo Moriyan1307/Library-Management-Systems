@@ -873,13 +873,11 @@ function App() {
           >
             <thead>
               <tr>
-                <tr>
-                  <th style={tableHeaderStyle}>ISBN</th>
-                  <th style={tableHeaderStyle}>Title</th>
-                  <th style={tableHeaderStyle}>Author</th>
-                  <th style={tableHeaderStyle}>Number of Copies</th>
-                  <th style={tableHeaderStyle}>Days Loaned Out</th>
-                </tr>
+                <th style={tableHeaderStyle}>ISBN</th>
+                <th style={tableHeaderStyle}>Title</th>
+                <th style={tableHeaderStyle}>Author</th>
+                <th style={tableHeaderStyle}>Number of Copies</th>
+                <th style={tableHeaderStyle}>Days Loaned Out</th>
               </tr>
             </thead>
             <tbody>
@@ -894,7 +892,6 @@ function App() {
               ))}
             </tbody>
           </table>
-          ;
         </div>
       ) : (
         <p>Loading...</p>
