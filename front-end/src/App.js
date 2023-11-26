@@ -95,6 +95,7 @@ function App() {
       [e.target.name]: e.target.value,
     });
   };
+  console.log(returnData);
 
   const handleReturnSubmit = async (e) => {
     e.preventDefault();
@@ -855,7 +856,7 @@ function App() {
     <Box
       sx={{
         height: "auto",
-        width: "auto",
+        width: "100vw",
         zIndex: "999",
 
         backgroundColor: "white",

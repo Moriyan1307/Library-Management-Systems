@@ -7,12 +7,8 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 
 
-// Use body-parser middleware
 app.use(bodyParser.json());
 
-
-
-// Enable CORS for all routes
 app.use(cors());
 
 app.get('/',(req,res)=>{
@@ -97,24 +93,10 @@ app.get('/staff', (req, res) => {
   });
 });
 
-// app.get('/report', (req, res) => {
- 
-//   connection.query("SELECT c.SubjectArea, c.Author, COUNT(b.ISBN) AS NumberOfCopies, DATEDIFF(b.ReturnDate, b.IssueDate) AS DaysLoanedOut FROM Borrowing b JOIN Catalog c ON b.ISBN = c.ISBN WHERE WEEK(b.IssueDate) = WEEK(CURDATE()) GROUP BY c.SubjectArea, c.Author;", (err, results) => {
-//     if (err) {
-//       console.error('Error executing MySQL query:', err);
-//       res.status(500).send('Internal Server Error');
-//       return;
-//     } 
-//     res.json(results);
-//   });
-// });
-
-
-
 app.post('/api/addBook', (req, res) => {
   console.log('Received data:', req.body)
   const { ISBN, Title, Author, PublishedYear, Genre, Description, TotalCopies , AvailableCopies,
-  IsReferenceBook,IsRareBook,IsMap} = req.body; // Add other fields as needed
+  IsReferenceBook,IsRareBook,IsMap} = req.body; 
   connection.query('INSERT INTO Books SET ?', req.body, (err, results) => {
     if (err) {
       console.error('Error executing MySQL query:', err);
@@ -140,7 +122,7 @@ app.post('/api/addMember', (req, res) => {
 });
 
 
-app.post('/api/borrow', (req, res) => {
+app.post('/borrow', (req, res) => {
   console.log('Received data:', req.body)
   const { MemberID, ISBN, IssueDate} = req.body; // Add other fields as needed
   connection.query('INSERT INTO Borrowing SET ?', req.body, (err, results) => {
@@ -154,33 +136,68 @@ app.post('/api/borrow', (req, res) => {
 });
 
 
+// app.post('/return', (req, res) => {
+//   console.log('Received data:', req.body)
+//   const { MemberID, ISBN } = req.body; 
+//   const memberIdInt = parseInt(MemberID);
+
+//   const sql = 'UPDATE borrowing SET Status = ?, ReturnDate = CURDATE() WHERE MemberID = ? AND ISBN = ?';
+
+//   connection.query(sql, ['Returned', memberIdInt, ISBN], (err, result) => {
+//     if (err) {
+//       console.error('Error updating data in MySQL:', err);
+//       res.status(500).send('Internal Server Error');
+//     } else {
+//       console.log('Data updated in MySQL:', result);
+//       res.status(200).send('Data updated successfully');
+//     }
+//   });
+// });
+
+// app.post('/return', (req, res) => {
+//   console.log('Received data:', req.body);
+//   const { MemberID, ISBN } = req.body;
+
+//   const sql = 'UPDATE borrowing SET Status = ?, ReturnDate = CURDATE() WHERE MemberID = ? AND ISBN = ?';
+
+//   connection.query(sql, ['Returned', MemberID, ISBN], (err, result) => {
+//     if (err) {
+//       console.error('Error updating data in MySQL:', err);
+//       res.status(500).send('Internal Server Error');
+//     } else {
+//       console.log('Data updated in MySQL:', result);
+//       res.status(200).send('Data updated successfully');
+//     }
+//   });
+// });
 
 
-const newBorrow = {
-  MemberID: 16, // Replace with the actual MemberID
-  IssueDate: '2023-01-01',
-  DueDate: '2023-01-22',
-  ReturnDate: null,
-  Status: 'Borrowed',
-};
+app.post('/return', (req, res) => {
+  console.log('Received data:', req.body);
+  const { MemberID, ISBN } = req.body;
 
+  // Convert ISBN to string
+  const ISBNString = String(ISBN);
 
-app.get('/addborrow', (req, res) => {
- 
-  connection.query('INSERT INTO Borrowing SET ?', newBorrow, (err, results) => {
+  // Using parameterized query to prevent SQL injection
+  const sql = 'UPDATE borrowing SET Status = ?, ReturnDate = CURDATE() WHERE MemberID = ? AND ISBN = ?';
+
+  connection.query(sql, ['Returned', MemberID, ISBNString], (err, result) => {
     if (err) {
-      console.error('Error executing MySQL query:', err);
+      console.error('Error updating data in MySQL:', err);
       res.status(500).send('Internal Server Error');
-      return;
-    } 
-    res.json(results);
+    } else {
+      console.log('Data updated in MySQL:', result);
+      res.status(200).send('Data updated successfully');
+    }
   });
 });
 
+app.get('/api/members/:MemberID', (req, res) => {
+  const MemberID = req.params.MemberID;
 
-app.get('/return', (req, res) => {
-  const borrowingIDToReturn = 2; // Replace with the actual BorrowingID  
-  connection.query('UPDATE Borrowing SET ReturnDate = CURDATE(), Status = "Returned" WHERE BorrowingID = ?', [borrowingIDToReturn], (err, results) => {
+  const query = 'SELECT * FROM Members WHERE MemberID = ?';
+  connection.query(query, [MemberID], (err, results) => {
     if (err) {
       console.error('Error executing MySQL query:', err);
       res.status(500).send('Internal Server Error');
@@ -203,10 +220,8 @@ app.get('/renew', (req, res) => {
   });
 });
 
-
 // app.get('/report', (req, res) => {
- 
-//   connection.query("SELECT c.SubjectArea, c.Author, COUNT(b.ISBN) AS NumberOfCopies, DATEDIFF(b.ReturnDate, b.IssueDate) AS DaysLoanedOut FROM Borrowing b JOIN Catalog c ON b.ISBN = c.ISBN WHERE WEEK(b.IssueDate) = WEEK(CURDATE()) GROUP BY c.SubjectArea, c.Author;", (err, results) => {
+//   connection.query("SELECT c.SubjectArea, c.Author, b.ISBN, c.Title, COUNT(b.ISBN) AS NumberOfCopies, DATEDIFF(b.ReturnDate, b.IssueDate) AS DaysLoanedOut FROM Borrowing b JOIN Catalog c ON b.ISBN = c.ISBN WHERE b.ISBN IN (SELECT ISBN FROM Borrowing) GROUP BY c.SubjectArea, c.Author, b.ISBN, c.Title, b.IssueDate, b.ReturnDate;", (err, results) => {
 //     if (err) {
 //       console.error('Error executing MySQL query:', err);
 //       res.status(500).send('Internal Server Error');
@@ -217,9 +232,47 @@ app.get('/renew', (req, res) => {
 // });
 
 
+// app.get('/report', (req, res) => {
+//   connection.query(`
+//     SELECT
+//       c.SubjectArea,
+//       c.Author,
+//       b.ISBN,
+//       c.Title,
+//       COUNT(b.ISBN) AS NumberOfCopies,
+//       DATEDIFF(b.ReturnDate, b.IssueDate) AS DaysLoanedOut
+//     FROM
+//       Borrowing b
+//     JOIN
+//       Catalog c ON b.ISBN = c.ISBN
+//     GROUP BY
+//       c.SubjectArea, c.Author, b.ISBN, c.Title, b.IssueDate, b.ReturnDate;
+//   `, (err, results) => {
+//     if (err) {
+//       console.error('Error executing MySQL query:', err);
+//       res.status(500).send('Internal Server Error');
+//       return;
+//     } 
+//     res.json(results);
+//   });
+// });
+
 app.get('/report', (req, res) => {
- 
-  connection.query("SELECT c.SubjectArea, c.Author, b.ISBN, c.Title, COUNT(b.ISBN) AS NumberOfCopies, DATEDIFF(b.ReturnDate, b.IssueDate) AS DaysLoanedOut FROM Borrowing b JOIN Catalog c ON b.ISBN = c.ISBN WHERE b.ISBN IN ('978-0060935467', '978-0061120084', '978-0140283334','978-0143039433', '978-0307454544', '978-0316769488','978-0316769490', '978-0375411557', '978-0385472579','978-0451524935', '978-0553213481', '978-0743247544','978-0743273565', '978-0987654321', '978-1122334455','978-1234567890', '978-1234568611', '978-1234568650','978-1400033423', '978-9876543210') GROUP BY c.SubjectArea, c.Author, b.ISBN, c.Title, b.IssueDate, b.ReturnDate;", (err, results) => {
+  connection.query(`
+    SELECT
+      c.SubjectArea,
+      c.Author,
+      b.ISBN,
+      c.Title,
+      COUNT(b.ISBN) AS NumberOfCopies,
+      DATEDIFF(b.ReturnDate, b.IssueDate) AS DaysLoanedOut
+    FROM
+      Borrowing b
+    JOIN
+      Catalog c ON b.ISBN = c.ISBN
+    GROUP BY
+      c.SubjectArea, c.Author, b.ISBN, c.Title, b.IssueDate, b.ReturnDate;
+  `, (err, results) => {
     if (err) {
       console.error('Error executing MySQL query:', err);
       res.status(500).send('Internal Server Error');
@@ -228,11 +281,6 @@ app.get('/report', (req, res) => {
     res.json(results);
   });
 });
-
-
-
-
-
 
 
 app.listen(8080, ()=>{
