@@ -105,7 +105,6 @@ function App() {
       console.log("Response from server:", response.data);
 
       alert("Successful");
-      handleRecipt();
     } catch (error) {
       console.error("Error submitting data:", error);
       alert(error);
@@ -369,7 +368,9 @@ function App() {
         <Button variant="oulined" type="submit">
           Submit
         </Button>
-        <Button variant="oulined">Print Recipt</Button>
+        <Button variant="oulined" onClick={() => handleRecipt()}>
+          Print Recipt
+        </Button>
 
         <Button onClick={() => setIsReturnPrompt(false)} variant="outlined">
           Close
