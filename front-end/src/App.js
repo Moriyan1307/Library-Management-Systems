@@ -90,11 +90,15 @@ function App() {
     ISBN: "",
     // Add other fields as needed
   });
+
   const handleReturn = (e) => {
     setReturnData({
+      ...returnData,
       [e.target.name]: e.target.value,
     });
   };
+
+  console.log(returnData);
 
   const handleReturnSubmit = async (e) => {
     e.preventDefault();
@@ -211,7 +215,6 @@ function App() {
       [e.target.name]: e.target.value,
     });
   };
-  console.log(formData);
 
   const handleSubmit2 = async (e) => {
     e.preventDefault();
@@ -233,7 +236,6 @@ function App() {
       [e.target.name]: e.target.value,
     });
   };
-  console.log(formData2);
 
   // useEffect(() => {
   //   const fetchData = async () => {
