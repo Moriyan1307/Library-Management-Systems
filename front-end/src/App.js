@@ -19,6 +19,8 @@ function App() {
   const [catalogData, setCatalogData] = useState(null);
   const [borrowingData, setBorrowingData] = useState(null);
   const [ReportData, setReportData] = useState(null);
+  const [receiptDetails, setReceiptDetails] = useState(null);
+
   const [bprompt, setBprompt] = useState(false);
   const [Is_mprompt, setIs_mprompt] = useState(false);
   const [isBookPrompt, setIsBookPrompt] = useState(false);
@@ -28,16 +30,17 @@ function App() {
   const [isBorrowingTable, setIsBorrowingTable] = useState(false);
   const [isCatalogTable, setIsCatalogTable] = useState(false);
   const [isReportTable, setIsReportTable] = useState(false);
+  const [isRecipt, setIsRecipt] = useState(false);
 
   function convertDateStringToReadable(dateString) {
     const date = new Date(dateString);
-  
+
     // Options for formatting the date
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-  
+    const options = { year: "numeric", month: "long", day: "numeric" };
+
     // Convert to a readable date string
-    const readableDateString = date.toLocaleDateString('en-US', options);
-  
+    const readableDateString = date.toLocaleDateString("en-US", options);
+
     return readableDateString;
   }
 
@@ -59,19 +62,16 @@ function App() {
     e.preventDefault();
 
     try {
-      
       const response = await axios.post(`${apiUrl}/borrow`, borrowData);
       console.log("Response from server:", response.data);
-      // Optionally, you can reset the form or perform other actions upon successful submission
+
       setBorrowData({
         MemberID: "",
         ISBN: "",
         IssueDate: "",
-        // Reset other fields as needed
       });
     } catch (error) {
       console.error("Error submitting data:", error);
-      // Handle error state or display an error message to the user
     }
   };
 
@@ -102,21 +102,13 @@ function App() {
     ISBN: "",
     // Add other fields as needed
   });
-<<<<<<< HEAD
-=======
-  // const handleReturn = (e) => {
-  //   setReturnData({
-  //     [e.target.name]: e.target.value,
-  //   });
-  // };
->>>>>>> 72999f2c718de5b29c4be076965275e54b099332
 
   const handleReturn = (e) => {
     setReturnData({
       ...returnData,
       [e.target.name]: e.target.value,
-    });
-  };
+    });
+  };
 
   console.log(returnData);
 
@@ -137,13 +129,15 @@ function App() {
   };
 
   const handleRecipt = async (e) => {
-    e.preventDefault();
+    setIsRecipt(true);
 
     try {
       const response = await axios.get(
-        `${apiUrl}/member/${returnData.MemberID}`
+        console.log(
+          returnData.MemberID
+        )`${apiUrl}/member/${returnData.MemberID}`
       );
-      console.log("Response from server:", response.data);
+      setReceiptDetails(response.data);
     } catch (error) {
       console.error("Error submitting data:", error);
     }
@@ -169,7 +163,6 @@ function App() {
     try {
       const response = await axios.get(`${apiUrl}/book`);
       setBookData(response.data);
-      console.log(bookData);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -192,7 +185,6 @@ function App() {
       const response = await axios.get(`${apiUrl}/borrowing`);
       setBorrowingData(response.data);
       console.log(borrowingData);
-      
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -349,6 +341,62 @@ function App() {
     </Box>
   );
 
+  const reciptTable = (
+    <Box
+      sx={{
+        height: "70vh",
+        width: "50vw",
+        zIndex: "999",
+        border: "2px solid #000",
+
+        backgroundColor: "white",
+        position: "absolute",
+      }}
+    >
+      <div
+        style={{
+          height: "80%",
+          maxWidth: "400px",
+          margin: "0 auto",
+          padding: "20px",
+
+          fontFamily: "Arial, sans-serif",
+        }}
+      >
+        <div style={{ textAlign: "center", marginBottom: "20px" }}>
+          <h1>Library Receipt</h1>
+        </div>
+        <div style={{ marginBottom: "20px" }}>
+          <p>
+            <strong>Borrowing ID:</strong> {receiptDetails?.BorrowingID}
+          </p>
+          <p>
+            <strong>Member ID:</strong> {receiptDetails?.MemberID}
+          </p>
+          <p>
+            <strong>Issue Date:</strong> {receiptDetails?.IssueDate}
+          </p>
+          <p>
+            <strong>Due Date:</strong> {receiptDetails?.DueDate}
+          </p>
+          <p>
+            <strong>Return Date:</strong> {receiptDetails?.ReturnDate}
+          </p>
+          <p>
+            <strong>Status:</strong> {receiptDetails?.Status}
+          </p>
+          <p>
+            <strong>ISBN:</strong> {receiptDetails?.ISBN}
+          </p>
+        </div>
+      </div>
+
+      <Button onClick={() => setIsRecipt(false)} variant="outlined">
+        Close
+      </Button>
+    </Box>
+  );
+
   const returnPrompt = (
     <Box
       sx={{
@@ -396,6 +444,8 @@ function App() {
           Print Recipt
         </Button>
 
+        {isRecipt && reciptTable}
+
         <Button onClick={() => setIsReturnPrompt(false)} variant="outlined">
           Close
         </Button>
@@ -440,9 +490,15 @@ function App() {
                   <tr key={borrowing.BorrowingID}>
                     <td style={tableCellStyle}>{borrowing.BorrowingID}</td>
                     <td style={tableCellStyle}>{borrowing.MemberID}</td>
-                    <td style={tableCellStyle}>convertDateStringToReadable({borrowing.IssueDate})</td>
-                    <td style={tableCellStyle}>convertDateStringToReadable({borrowing.DueDate})</td>
-                    <td style={tableCellStyle}>convertDateStringToReadable({borrowing.ReturnDate})</td>
+                    <td style={tableCellStyle}>
+                      {convertDateStringToReadable(borrowing.IssueDate)}
+                    </td>
+                    <td style={tableCellStyle}>
+                      {convertDateStringToReadable(borrowing.DueDate)}
+                    </td>
+                    <td style={tableCellStyle}>
+                      {convertDateStringToReadable(borrowing.ReturnDate)}
+                    </td>
                     <td style={tableCellStyle}>{borrowing.Status}</td>
                     <td style={tableCellStyle}>{borrowing.ISBN}</td>
                   </tr>
