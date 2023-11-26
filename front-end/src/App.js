@@ -29,6 +29,18 @@ function App() {
   const [isCatalogTable, setIsCatalogTable] = useState(false);
   const [isReportTable, setIsReportTable] = useState(false);
 
+  function convertDateStringToReadable(dateString) {
+    const date = new Date(dateString);
+  
+    // Options for formatting the date
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  
+    // Convert to a readable date string
+    const readableDateString = date.toLocaleDateString('en-US', options);
+  
+    return readableDateString;
+  }
+
   const [borrowData, setBorrowData] = useState({
     MemberID: "",
     ISBN: "",
@@ -47,7 +59,7 @@ function App() {
     e.preventDefault();
 
     try {
-      // Replace 'http://localhost:3001/api/borrow' with your actual server endpoint
+      
       const response = await axios.post(`${apiUrl}/borrow`, borrowData);
       console.log("Response from server:", response.data);
       // Optionally, you can reset the form or perform other actions upon successful submission
@@ -90,13 +102,23 @@ function App() {
     ISBN: "",
     // Add other fields as needed
   });
+<<<<<<< HEAD
+=======
+  // const handleReturn = (e) => {
+  //   setReturnData({
+  //     [e.target.name]: e.target.value,
+  //   });
+  // };
+>>>>>>> 72999f2c718de5b29c4be076965275e54b099332
 
   const handleReturn = (e) => {
     setReturnData({
       ...returnData,
       [e.target.name]: e.target.value,
-    });
-  };
+    });
+  };
+
+  console.log(returnData);
 
   console.log(returnData);
 
@@ -170,6 +192,7 @@ function App() {
       const response = await axios.get(`${apiUrl}/borrowing`);
       setBorrowingData(response.data);
       console.log(borrowingData);
+      
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -384,7 +407,7 @@ function App() {
     <Box
       sx={{
         height: "auto",
-        width: "auto",
+        width: "100vw",
         zIndex: "999",
 
         backgroundColor: "white",
@@ -417,9 +440,9 @@ function App() {
                   <tr key={borrowing.BorrowingID}>
                     <td style={tableCellStyle}>{borrowing.BorrowingID}</td>
                     <td style={tableCellStyle}>{borrowing.MemberID}</td>
-                    <td style={tableCellStyle}>{borrowing.IssueDate}</td>
-                    <td style={tableCellStyle}>{borrowing.DueDate}</td>
-                    <td style={tableCellStyle}>{borrowing.ReturnDate}</td>
+                    <td style={tableCellStyle}>convertDateStringToReadable({borrowing.IssueDate})</td>
+                    <td style={tableCellStyle}>convertDateStringToReadable({borrowing.DueDate})</td>
+                    <td style={tableCellStyle}>convertDateStringToReadable({borrowing.ReturnDate})</td>
                     <td style={tableCellStyle}>{borrowing.Status}</td>
                     <td style={tableCellStyle}>{borrowing.ISBN}</td>
                   </tr>
@@ -858,7 +881,7 @@ function App() {
     <Box
       sx={{
         height: "auto",
-        width: "auto",
+        width: "100vw",
         zIndex: "999",
 
         backgroundColor: "white",
