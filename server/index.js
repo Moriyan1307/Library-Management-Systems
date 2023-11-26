@@ -193,10 +193,10 @@ app.post('/return', (req, res) => {
   });
 });
 
-app.get('/api/members/:MemberID', (req, res) => {
+app.get('/members/:MemberID', (req, res) => {
   const MemberID = req.params.MemberID;
 
-  const query = 'SELECT * FROM Members WHERE MemberID = ?';
+  const query = 'SELECT * FROM Borrowing WHERE MemberID = ? order by returnDate desc limit 1';
   connection.query(query, [MemberID], (err, results) => {
     if (err) {
       console.error('Error executing MySQL query:', err);
