@@ -133,14 +133,14 @@ function App() {
 
     try {
       const response = await axios.get(
-        console.log(
-          returnData.MemberID
-        )`${apiUrl}/member/${returnData.MemberID}`
+        `${apiUrl}/members/${returnData.MemberID}`
       );
-      setReceiptDetails(response.data);
+      setReceiptDetails(response.data[0]);
+      console.log(response.data[0]);
     } catch (error) {
       console.error("Error submitting data:", error);
     }
+    
   };
 
   const apiUrl = "http://localhost:8080";
@@ -374,13 +374,13 @@ function App() {
             <strong>Member ID:</strong> {receiptDetails?.MemberID}
           </p>
           <p>
-            <strong>Issue Date:</strong> {receiptDetails?.IssueDate}
+            <strong>Issue Date:</strong> { convertDateStringToReadable(receiptDetails?.IssueDate) }
           </p>
           <p>
-            <strong>Due Date:</strong> {receiptDetails?.DueDate}
+            <strong>Due Date:</strong> {convertDateStringToReadable(receiptDetails?.DueDate)}
           </p>
           <p>
-            <strong>Return Date:</strong> {receiptDetails?.ReturnDate}
+            <strong>Return Date:</strong> {convertDateStringToReadable(receiptDetails?.ReturnDate)}
           </p>
           <p>
             <strong>Status:</strong> {receiptDetails?.Status}
